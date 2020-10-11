@@ -1,0 +1,13 @@
+{
+    "name": "juststeveking/uri-builder",
+    "description": "A simple URI builder in PHP that is slightly opinionated",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steve McDougall",
+            "email": "juststevemcd@gmail.com"
+        }
+    ],
+    "require": {}
+}
