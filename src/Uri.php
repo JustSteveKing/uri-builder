@@ -47,19 +47,9 @@ class Uri
             throw new RuntimeException("URI failed to parse using parse_url, please ensure is valid URL.");
         }
 
-        $url = self::build();
-
-        if (! isset($uri['scheme']) || is_null($uri['scheme'])) {
-            throw new RuntimeException("URI does not contain a Scheme");
-        }
-
-        $url->addScheme($uri['scheme']);
-
-        if (! isset($uri['host']) || is_null($uri['host'])) {
-            throw new RuntimeException("URI does not contain a Host");
-        }
-
-        $url->addHost($uri['host']);
+        $url = self::build()
+            ->addScheme($uri['scheme'])
+            ->addHost($uri['host']);
 
         if (isset($uri['path']) || ! is_null($uri['path'])) {
             $url->addPath($uri['path']);

@@ -121,7 +121,9 @@ class UriTest extends TestCase
     public function it_will_fail_to_build_from_a_string()
     {
         $this->expectException(RuntimeException::class);
-        $url = Uri::fromString('testing-stuff');
+        $url = Uri::fromString('http:///example.com');
+
+        $url = Uri::fromString(':80');
     }
 
     /**
