@@ -36,7 +36,7 @@ class Uri
     }
 
     /**
-     * @param string $uri
+     * @param  string $uri
      * @return self
      */
     public static function fromString(string $uri): self
@@ -73,7 +73,7 @@ class Uri
     }
 
     /**
-     * @param string $scheme
+     * @param  string $scheme
      * @return self
      */
     public function addScheme(string $scheme): self
@@ -92,7 +92,7 @@ class Uri
     }
 
     /**
-     * @param string $host
+     * @param  string $host
      * @return self
      */
     public function addHost(string $host): self
@@ -111,7 +111,7 @@ class Uri
     }
 
     /**
-     * @param string|null $path
+     * @param  string|null $path
      * @return self
      */
     public function addPath(?string $path = null): self
@@ -134,7 +134,7 @@ class Uri
     }
 
     /**
-     * @param string $path
+     * @param  string $path
      * @return self
      */
     public function addQuery(string $path): self
