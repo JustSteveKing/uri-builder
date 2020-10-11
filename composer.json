@@ -11,6 +11,10 @@
   ],
   "require": {},
   "require-dev": {},
-  "autoload": {},
+  "autoload": {
+    "psr-4": {
+      "JustSteveKing\\UriBuilder\\": "src/"
+    }
+  },
   "autoload-dev": {}
 }
