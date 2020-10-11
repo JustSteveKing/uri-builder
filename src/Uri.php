@@ -142,6 +142,11 @@ class Uri
         return $this->query;
     }
 
+    public function __toString(): string
+    {
+        return $this->to string();
+    }
+
     public function toString(): string
     {
         $url = "{$this->scheme}://{$this->host}";
