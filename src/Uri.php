@@ -3,6 +3,7 @@
 namespace JustSteveKing\UriBuilder;
 
 use JustSteveKing\ParameterBag\ParameterBag;
+use RuntimeException;
 
 class Uri
 {
@@ -19,7 +20,7 @@ class Uri
     /**
      * @var string|null
      */
-    private ?string $path;
+    private ?string $path = null;
 
     /**
      * @var ParameterBag
@@ -43,14 +44,32 @@ class Uri
         $uri = parse_url($uri);
 
         if (! is_array($uri)) {
-            throw new \RuntimeException("URI failed to parse using parse_url, please ensure is valid URL.");
+            throw new RuntimeException("URI failed to parse using parse_url, please ensure is valid URL.");
         }
 
-        return (new self())
-            ->addScheme($uri['scheme'])
-            ->addHost($uri['host'])
-            ->addPath($uri['path'])
-            ->addQuery($uri['query']);
+        $url = self::build();
+
+        if (! isset($uri['scheme']) || is_null($uri['scheme'])) {
+            throw new RuntimeException("URI does not contain a Scheme");
+        }
+
+        $url->addScheme($uri['scheme']);
+
+        if (! isset($uri['host']) || is_null($uri['host'])) {
+            throw new RuntimeException("URI does not contain a Host");
+        }
+
+        $url->addHost($uri['host']);
+
+        if (isset($uri['path']) || ! is_null($uri['path'])) {
+            $url->addPath($uri['path']);
+        }
+
+        if (isset($uri['query']) || ! is_null($uri['query'])) {
+            $url->addQuery($uri['query']);
+        }
+
+        return $url;
     }
 
     /**
@@ -65,6 +84,14 @@ class Uri
     }
 
     /**
+     * @return string
+     */
+    public function scheme(): string
+    {
+        return $this->scheme;
+    }
+
+    /**
      * @param string $host
      * @return self
      */
@@ -76,10 +103,18 @@ class Uri
     }
 
     /**
+     * @return string
+     */
+    public function host(): string
+    {
+        return $this->host;
+    }
+
+    /**
      * @param string|null $path
      * @return self
      */
-    public function addPath(?string $path): self
+    public function addPath(?string $path = null): self
     {
         if (is_null($path)) {
             return $this;
@@ -91,6 +126,14 @@ class Uri
     }
 
     /**
+     * @return string|null
+     */
+    public function path():? string
+    {
+        return $this->path;
+    }
+
+    /**
      * @param string $path
      * @return self
      */
@@ -99,5 +142,33 @@ class Uri
         $this->query = ParameterBag::fromString($path);
 
         return $this;
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function query(): ParameterBag
+    {
+        return $this->query;
+    }
+
+    public function toString(): string
+    {
+        $url = "{$this->scheme}://{$this->host}";
+
+        if (! is_null($this->path)) {
+            $url .= "{$this->path}";
+        }
+
+        if (! empty($this->query->all())) {
+            $collection = [];
+            foreach ($this->query->all() as $key => $value) {
+                $collection[] = "{$key}={$value}";
+            }
+
+            $url .= '?' . implode('&', $collection);
+        }
+
+        return $url;
     }
 }
