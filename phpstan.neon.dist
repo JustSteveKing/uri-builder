@@ -1,0 +1,11 @@
+parameters:
+  level: max
+  treatPhpDocTypesAsCertain: false
+  checkMissingIterableValueType: false
+  inferPrivatePropertyTypeFromConstructor: true
+  checkGenericClassInNonGenericObjectType: false
+  paths:
+    - src
+
+includes:
+  - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
