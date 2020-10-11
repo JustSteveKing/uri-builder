@@ -144,7 +144,7 @@ class Uri
 
     public function __toString(): string
     {
-        return $this->to string();
+        return $this->toString();
     }
 
     public function toString(): string
