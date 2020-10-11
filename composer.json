@@ -9,8 +9,12 @@
       "email": "juststevemcd@gmail.com"
     }
   ],
-  "require": {},
-  "require-dev": {},
+  "require": {
+    "juststeveking/parameterbag": "^1.1"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^5.1"
+  },
   "autoload": {
     "psr-4": {
       "JustSteveKing\\UriBuilder\\": "src/"
