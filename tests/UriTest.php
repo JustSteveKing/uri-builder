@@ -137,5 +137,10 @@ class UriTest extends TestCase
             $this->url,
             $url->toString()
         );
+
+        $this->assertEquals(
+            $this->url,
+            (string) $url
+        );
     }
 }
