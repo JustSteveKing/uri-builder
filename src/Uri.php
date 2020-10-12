@@ -61,9 +61,15 @@ class Uri
 
         $url = self::build()
             ->addScheme($uri['scheme'] ?? null)
-            ->addHost($uri['host'] ?? null)
-            ->addPath($uri['path'] ?? null)
-            ->addQuery(isset($uri['query']) ? $uri['query'] : null);
+            ->addHost($uri['host'] ?? null);
+
+        if (isset($uri['path'])) {
+            $url->addPath($uri['path'] ?? null);
+        }
+
+        if (isset($uri['query'])) {
+            $url->addQuery(isset($uri['query']) ? $uri['query'] : null);
+        }
 
         $fragment = parse_url($original, PHP_URL_FRAGMENT);
 
