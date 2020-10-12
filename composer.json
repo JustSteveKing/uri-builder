@@ -10,6 +10,7 @@
     }
   ],
   "require": {
+    "php": "^7.4",
     "juststeveking/parameterbag": "^1.1"
   },
   "require-dev": {
