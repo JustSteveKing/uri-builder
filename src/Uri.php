@@ -10,12 +10,12 @@ class Uri
     /**
      * @var string
      */
-    private string $scheme;
+    private string $scheme = '';
 
     /**
      * @var string
      */
-    private string $host;
+    private string $host = '';
 
     /**
      * @var string|null
