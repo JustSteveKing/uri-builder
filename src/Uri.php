@@ -168,8 +168,8 @@ class Uri
 
     /**
      * @param  string $key
-     * @param  mixed $value
-     * @param  bool $covertBoolToString
+     * @param  mixed  $value
+     * @param  bool   $covertBoolToString
      * @return self
      */
     public function addQueryParam(string $key, $value, bool $covertBoolToString = false): self
