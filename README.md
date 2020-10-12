@@ -51,6 +51,9 @@ $url = Uri::build()
            ->addQuery('include=test,another&sort=-name');
 
 $string = $url->toString();
+
+// optionally
+echo (string) $url;
 ```
 
 ### Adding Query Parameters after creation
