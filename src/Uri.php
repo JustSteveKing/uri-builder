@@ -28,6 +28,11 @@ class Uri
     private ParameterBag $query;
 
     /**
+     * @var string|null
+     */
+    private ?string $fragment = null;
+
+    /**
      * @return self
      */
     public static function build(): self
@@ -41,6 +46,8 @@ class Uri
      */
     public static function fromString(string $uri): self
     {
+        $original = $uri;
+
         $uri = parse_url($uri);
 
         if (! is_array($uri)) {
@@ -57,6 +64,12 @@ class Uri
 
         if (isset($uri['query']) || ! is_null($uri['query'])) {
             $url->addQuery($uri['query']);
+        }
+
+        $fragment = parse_url($original, PHP_URL_FRAGMENT);
+
+        if (! is_null($fragment)) {
+            $url->addFragment($fragment);
         }
 
         return $url;
@@ -142,11 +155,40 @@ class Uri
         return $this->query;
     }
 
+    /**
+     * @param  string $fragment
+     * @return self
+     */
+    public function addFragment(string $fragment): self
+    {
+        if (is_null($fragment)) {
+            return $this;
+        }
+
+        $this->fragment = (substr($fragment, 0, 1) === '#') ? $fragment : "#{$fragment}";
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function fragment():? string
+    {
+        return $this->fragment;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    /**
+     * @return string
+     */
     public function toString(): string
     {
         $url = "{$this->scheme}://{$this->host}";
@@ -162,6 +204,10 @@ class Uri
             }
 
             $url .= '?' . implode('&', $collection);
+        }
+
+        if (! is_null($this->fragment)) {
+            $url .= "{$this->fragment}";
         }
 
         return $url;

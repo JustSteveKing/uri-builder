@@ -116,6 +116,30 @@ class UriTest extends TestCase
 
     /**
      * @test
+     */
+    public function it_will_set_the_fragment()
+    {
+        $url = Uri::build();
+
+        $this->assertNull($url->fragment());
+
+        $url->addFragment('test');
+
+        $this->assertEquals(
+            '#test',
+            $url->fragment()
+        );
+
+        $url->addFragment('#with-hash');
+
+        $this->assertEquals(
+            '#with-hash',
+            $url->fragment()
+        );
+    }
+
+    /**
+     * @test
      * @throws RuntimeException
      */
     public function it_will_fail_to_build_from_a_string()
@@ -140,6 +164,20 @@ class UriTest extends TestCase
 
         $this->assertEquals(
             $this->url,
+            (string) $url
+        );
+
+        $newUrl = "{$this->url}#add-fragment";
+
+        $url = Uri::fromString($newUrl);
+
+        $this->assertEquals(
+            $newUrl,
+            $url->toString()
+        );
+
+        $this->assertEquals(
+            $newUrl,
             (string) $url
         );
     }
