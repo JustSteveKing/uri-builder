@@ -187,13 +187,7 @@ class UriTest extends TestCase
      */
     public function it_will_let_me_build_query_params_gradually()
     {
-        $url = Uri::fromString('https://www.domain.com/api/v1/resource');
-
-        $this->assertEmpty(
-            $url->queryParams()
-        );
-
-        $url->addQueryParam('test', 'another');
+        $url = Uri::fromString('https://www.domain.com/api/v1/resource?test=another');
 
         $this->assertEquals(
             ['test' => 'another'],
@@ -216,13 +210,7 @@ class UriTest extends TestCase
      */
     public function it_will_allow_me_to_convert_booleans_to_strings()
     {
-        $url = Uri::fromString('https://www.domain.com/api/v1/resource');
-
-        $this->assertEmpty(
-            $url->queryParams()
-        );
-
-        $url->addQueryParam('test', true);
+        $url = Uri::fromString('https://www.domain.com/api/v1/resource?test=1');
 
         $this->assertEquals(
             ['test' => true],

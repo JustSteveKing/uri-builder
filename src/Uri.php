@@ -32,6 +32,11 @@ class Uri
      */
     private ?string $fragment = null;
 
+    private function __construct()
+    {
+        $this->query = new ParameterBag([]);
+    }
+
     /**
      * @return self
      */
@@ -55,14 +60,14 @@ class Uri
         }
 
         $url = self::build()
-            ->addScheme($uri['scheme'])
-            ->addHost($uri['host'])
-            ->addPath($uri['path'])
+            ->addScheme($uri['scheme'] ?? null)
+            ->addHost($uri['host'] ?? null)
+            ->addPath($uri['path'] ?? null)
             ->addQuery(isset($uri['query']) ? $uri['query'] : null);
 
         $fragment = parse_url($original, PHP_URL_FRAGMENT);
 
-        if (! is_null($fragment)) {
+        if (! is_null($fragment) && $fragment !== false) {
             $url->addFragment($fragment);
         }
 
@@ -70,11 +75,15 @@ class Uri
     }
 
     /**
-     * @param  string $scheme
+     * @param  string|null $scheme
      * @return self
      */
-    public function addScheme(string $scheme): self
+    public function addScheme(?string $scheme): self
     {
+        if (is_null($scheme)) {
+            throw new RuntimeException("Cannot set scheme to a null value.");
+        }
+
         $this->scheme = $scheme;
 
         return $this;
@@ -89,11 +98,15 @@ class Uri
     }
 
     /**
-     * @param  string $host
+     * @param  string|null $host
      * @return self
      */
-    public function addHost(string $host): self
+    public function addHost(?string $host): self
     {
+        if (is_null($host)) {
+            throw new RuntimeException("Cannot set host to a null value.");
+        }
+
         $this->host = $host;
 
         return $this;
@@ -137,9 +150,7 @@ class Uri
     public function addQuery(?string $query = null): self
     {
         if (is_null($query)) {
-            $this->query = new ParameterBag([]);
-
-            return $this;
+            throw new RuntimeException("Cannot set query to a null value.");
         }
 
         $this->query = ParameterBag::fromString($query);
@@ -156,17 +167,13 @@ class Uri
     }
 
     /**
-     * @param  string $path
+     * @param  string $key
      * @param  mixed $value
-     * @param  book $covertBoolToString
+     * @param  bool $covertBoolToString
      * @return self
      */
     public function addQueryParam(string $key, $value, bool $covertBoolToString = false): self
     {
-        if (is_null($this->query) || ! isset($this->query)) {
-            $this->query = new ParameterBag([]);
-        }
-
         if (is_array($value) || is_object($value)) {
             throw new RuntimeException("Cannot set Query Parameter to: array, object");
         }
@@ -194,7 +201,7 @@ class Uri
      */
     public function addFragment(string $fragment): self
     {
-        if (is_null($fragment)) {
+        if ($fragment === '') {
             return $this;
         }
 
