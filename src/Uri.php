@@ -163,6 +163,10 @@ class Uri
      */
     public function addQueryParam(string $key, $value, bool $covertBoolToString = false): self
     {
+        if (is_null($this->query) || ! isset($this->query)) {
+            $this->query = new ParameterBag([]);
+        }
+
         if (is_array($value) || is_object($value)) {
             throw new RuntimeException("Cannot set Query Parameter to: array, object");
         }
