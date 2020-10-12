@@ -1,3 +1,9 @@
+<p align="center">
+
+![](./uri-builder.png)
+
+</p>
+
 # URI Builder
 <!-- BADGES_START -->
 [![Latest Version][badge-release]][packagist]
