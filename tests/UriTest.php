@@ -181,4 +181,90 @@ class UriTest extends TestCase
             (string) $url
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_will_let_me_build_query_params_gradually()
+    {
+        $url = Uri::fromString('https://www.domain.com/api/v1/resource');
+
+        $this->assertEmpty(
+            $url->queryParams()
+        );
+
+        $url->addQueryParam('test', 'another');
+
+        $this->assertEquals(
+            ['test' => 'another'],
+            $url->queryParams()
+        );
+
+        $url->addQueryParam('boolean', true);
+
+        $this->assertEquals(
+            [
+                'test' => 'another',
+                'boolean' => 1
+            ],
+            $url->queryParams()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_will_allow_me_to_convert_booleans_to_strings()
+    {
+        $url = Uri::fromString('https://www.domain.com/api/v1/resource');
+
+        $this->assertEmpty(
+            $url->queryParams()
+        );
+
+        $url->addQueryParam('test', true);
+
+        $this->assertEquals(
+            ['test' => true],
+            $url->queryParams()
+        );
+
+        $url->addQueryParam('another', false, true);
+
+        $this->assertEquals(
+            [
+                'test' => true,
+                'another' => 'false'
+            ],
+            $url->queryParams()
+        );
+
+        $url->addQueryParam('last', false, true);
+
+        $this->assertEquals(
+            [
+                'test' => true,
+                'another' => 'false',
+                'last' => 'false'
+            ],
+            $url->queryParams()
+        );
+
+        $this->assertEquals(
+            "https://www.domain.com/api/v1/resource?test=1&another=false&last=false",
+            $url->toString()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_an_exception_when_sending_unsupported_query_params()
+    {
+        $this->expectException(RuntimeException::class);
+        $url = Uri::fromString('https://www.domain.com/api/v1/resource');
+
+        $url->addQueryParam('array', ['test' => 'value']);
+        $url->addQueryParam('object', new class{});
+    }
 }

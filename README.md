@@ -31,7 +31,8 @@ $url = Uri::build()
            ->addScheme('https')
            ->addHost('www.domain.com')
            ->addPath('api/v1/resource')
-           ->addQuery('include=test,another&sort=-name');
+           ->addQuery('include=test,another&sort=-name')
+           ->addFragment('static-link-to-element');
 ```
 
 ### Creating from a String
@@ -51,3 +52,25 @@ $url = Uri::build()
 
 $string = $url->toString();
 ```
+
+### Adding Query Parameters after creation
+
+Creating query parameters after creation is pretty simple. You can pass through anything that isn't:
+
+- An Object
+- An Array
+
+It has a helper option on the end of the function which will convert booleans to strings.
+
+```php
+public function addQueryParam(string $key, $value, bool $covertBoolToString = false)
+```
+
+The following is how you use it:
+
+```php
+$url = Uri::fromString('https://www.domain.com/api/v1/resource');
+$url->addQueryParam('include', 'test,another,options')
+    ->addQueryParam('published', true, true);
+```
+The output will be: `https://www.domain.com/api/v1/resource?include=test,another,options&published=true`

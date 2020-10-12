@@ -56,15 +56,9 @@ class Uri
 
         $url = self::build()
             ->addScheme($uri['scheme'])
-            ->addHost($uri['host']);
-
-        if (isset($uri['path']) || ! is_null($uri['path'])) {
-            $url->addPath($uri['path']);
-        }
-
-        if (isset($uri['query']) || ! is_null($uri['query'])) {
-            $url->addQuery($uri['query']);
-        }
+            ->addHost($uri['host'])
+            ->addPath($uri['path'])
+            ->addQuery(isset($uri['query']) ? $uri['query'] : null);
 
         $fragment = parse_url($original, PHP_URL_FRAGMENT);
 
@@ -137,12 +131,18 @@ class Uri
     }
 
     /**
-     * @param  string $path
+     * @param  string|null $query
      * @return self
      */
-    public function addQuery(string $path): self
+    public function addQuery(?string $query = null): self
     {
-        $this->query = ParameterBag::fromString($path);
+        if (is_null($query)) {
+            $this->query = new ParameterBag([]);
+
+            return $this;
+        }
+
+        $this->query = ParameterBag::fromString($query);
 
         return $this;
     }
@@ -153,6 +153,35 @@ class Uri
     public function query(): ParameterBag
     {
         return $this->query;
+    }
+
+    /**
+     * @param  string $path
+     * @param  mixed $value
+     * @param  book $covertBoolToString
+     * @return self
+     */
+    public function addQueryParam(string $key, $value, bool $covertBoolToString = false): self
+    {
+        if (is_array($value) || is_object($value)) {
+            throw new RuntimeException("Cannot set Query Parameter to: array, object");
+        }
+
+        if ($covertBoolToString && is_bool($value)) {
+            $value = ($value) ? 'true' : 'false';
+        }
+
+        $this->query->set($key, $value);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function queryParams(): array
+    {
+        return $this->query->all();
     }
 
     /**
