@@ -233,9 +233,10 @@ class Uri
     }
 
     /**
+     * @param bool $encode
      * @return string
      */
-    public function toString(): string
+    public function toString(bool $encode = false): string
     {
         $url = "{$this->scheme}://{$this->host}";
 
@@ -254,6 +255,10 @@ class Uri
 
         if (! is_null($this->fragment)) {
             $url .= "{$this->fragment}";
+        }
+
+        if ($encode) {
+            $url = urlencode($url);
         }
 
         return $url;
