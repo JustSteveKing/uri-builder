@@ -255,4 +255,47 @@ class UriTest extends TestCase
         $url->addQueryParam('array', ['test' => 'value']);
         $url->addQueryParam('object', new class{});
     }
+
+    /**
+     * @test
+     */
+    public function it_will_url_encode_if_requested()
+    {
+        $queryParam = "query=url encode me";
+        $url = Uri::fromString("https://www.domain.com/api/v1/resource?{$queryParam}");
+
+        $this->assertEquals(
+            "https://www.domain.com/api/v1/resource?{$queryParam}",
+            $url->toString()
+        );
+
+        $encoded = urlencode($queryParam);
+        $this->assertEquals(
+            "https://www.domain.com/api/v1/resource?{$encoded}",
+            $url->toString(true)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_will_set_the_port_if_passed_and_wont_if_not()
+    {
+        $urlString = 'https://www.domain.com/api/v1/resource';
+        $url = Uri::fromString($urlString);
+
+        $this->assertNull($url->port());
+
+        $url = Uri::fromString('https://www.domain.com:9000');
+        $this->assertIsInt($url->port());
+        $this->assertEquals(
+            9000,
+            $url->port()
+        );
+
+        $this->assertEquals(
+            'https://www.domain.com:9000',
+            $url->toString()
+        );
+    }
 }

@@ -18,6 +18,11 @@ class Uri
     private string $host = '';
 
     /**
+     * @var int|null
+     */
+    private ?int $port = null;
+
+    /**
      * @var string|null
      */
     private ?string $path = null;
@@ -62,6 +67,10 @@ class Uri
         $url = self::build()
             ->addScheme($uri['scheme'] ?? null)
             ->addHost($uri['host'] ?? null);
+
+        if (isset($uri['port'])) {
+            $url->addPort($uri['port']);
+        }
 
         if (isset($uri['path'])) {
             $url->addPath($uri['path'] ?? null);
@@ -124,6 +133,29 @@ class Uri
     public function host(): string
     {
         return $this->host;
+    }
+
+    /**
+     * @param int|null $port
+     * @return $this
+     */
+    public function addPort(?int $port): self
+    {
+        if (is_null($port)) {
+            throw new RuntimeException("Cannot set port to a null value.");
+        }
+
+        $this->port = $port;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function port():? int
+    {
+        return $this->port;
     }
 
     /**
@@ -240,6 +272,10 @@ class Uri
     {
         $url = "{$this->scheme}://{$this->host}";
 
+        if (! is_null($this->port)) {
+            $url .= ":{$this->port}";
+        }
+
         if (! is_null($this->path)) {
             $url .= "{$this->path}";
         }
@@ -250,15 +286,17 @@ class Uri
                 $collection[] = "{$key}={$value}";
             }
 
-            $url .= '?' . implode('&', $collection);
+            $queryParamString = implode('&', $collection);
+
+            if ($encode) {
+                $queryParamString = urlencode($queryParamString);
+            }
+
+            $url .= "?{$queryParamString}";
         }
 
         if (! is_null($this->fragment)) {
             $url .= "{$this->fragment}";
-        }
-
-        if ($encode) {
-            $url = urlencode($url);
         }
 
         return $url;
