@@ -75,6 +75,18 @@ $string = $url->toString();
 echo (string) $url;
 ```
 
+The `toString` method has an optional parameter which will allow you to urlencode the query parameters before returning the URI.
+
+```php
+$url = Uri::build()
+           ->addScheme('https')
+           ->addHost('www.domain.com')
+           ->addPath('api/v1/resource')
+           ->addQuery('include=test,another&sort=-name');
+
+$string = $url->toString(true)
+```
+
 ### Adding Query Parameters after creation
 
 Creating query parameters after creation is pretty simple. You can pass through anything that isn't:
