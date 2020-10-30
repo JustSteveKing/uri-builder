@@ -10,12 +10,11 @@
     }
   ],
   "require": {
-    "php": "^7.4",
+    "php": "^7.4|^8.0",
     "juststeveking/parameterbag": "^1.1"
   },
   "require-dev": {
     "symfony/var-dumper": "^5.1",
-    "vimeo/psalm": "^3.16",
     "phpunit/phpunit": "^9.4",
     "phpstan/phpstan": "^0.12.48",
     "squizlabs/php_codesniffer": "^3.5",
@@ -25,10 +24,8 @@
   "scripts": {
     "preflight:analyze": [
       "@preflight:analyze:phpstan",
-      "@preflight:analyze:psalm"
     ],
     "preflight:analyze:phpstan": "phpstan analyse -c phpstan.neon.dist --no-progress",
-    "preflight:analyze:psalm": "psalm --diff --diff-methods --show-info=true --config=psalm.xml.dist",
     "preflight:test": "phpunit",
     "preflight:test:coverage:ci": "phpunit --coverage-clover build/logs/clover.xml",
     "preflight:test:coverage:html": "phpunit --coverage-html build/coverage"
@@ -36,7 +33,6 @@
   "scripts-descriptions": {
     "preflight:analyze": "Performs static analysis on the code base.",
     "preflight:analyze:phpstan": "Runs the PHPStan static analyzer.",
-    "preflight:analyze:psalm": "Runs the Psalm static analyzer.",
     "preflight:test": "Runs the full unit test suite.",
     "preflight:test:coverage:ci": "Runs the unit test suite and generates a Clover coverage report.",
     "preflight:test:coverage:html": "Runs the unit tests suite and generates an HTML coverage report."
