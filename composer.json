@@ -23,7 +23,7 @@
   },
   "scripts": {
     "preflight:analyze": [
-      "@preflight:analyze:phpstan",
+      "@preflight:analyze:phpstan"
     ],
     "preflight:analyze:phpstan": "phpstan analyse -c phpstan.neon.dist --no-progress",
     "preflight:test": "phpunit",
