@@ -6,7 +6,7 @@ on:
 
 jobs:
   linux_tests:
-    runs-on: [ubuntu-lates]
+    runs-on: [ubuntu-latest]
     strategy:
       fail-fast: true
       matrix:
@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [ 7.4 ]
+        php: [ 7.4, 8.0 ]
 
     name: PHP ${{ matrix.php }} on Windows
 
