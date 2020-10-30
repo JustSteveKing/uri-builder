@@ -4,24 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d47968778fba50b27ef5324cf3a51af5",
+    "content-hash": "121d19bf9d4c367dea8704574ebd0584",
     "packages": [
         {
             "name": "juststeveking/parameterbag",
-            "version": "v1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JustSteveKing/ParameterBag.git",
-                "reference": "49bc0b77a93a89240382ac62fe9fde904323739e"
+                "reference": "bdc8578343a3cd3dc0777e6e7660a5c5e7db3f51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JustSteveKing/ParameterBag/zipball/49bc0b77a93a89240382ac62fe9fde904323739e",
-                "reference": "49bc0b77a93a89240382ac62fe9fde904323739e",
+                "url": "https://api.github.com/repos/JustSteveKing/ParameterBag/zipball/bdc8578343a3cd3dc0777e6e7660a5c5e7db3f51",
+                "reference": "bdc8578343a3cd3dc0777e6e7660a5c5e7db3f51",
                 "shasum": ""
             },
             "require": {
-                "php": "~7.4"
+                "php": "~7.4|^8.0"
             },
             "require-dev": {
                 "phpstan/phpstan": "^0.12.25",
@@ -49,9 +49,15 @@
             "description": "A flexible parameter bag in place of standard arrays on PHP classes",
             "support": {
                 "issues": "https://github.com/JustSteveKing/ParameterBag/issues",
-                "source": "https://github.com/JustSteveKing/ParameterBag/tree/v1.1"
+                "source": "https://github.com/JustSteveKing/ParameterBag/tree/v1.2.0"
             },
-            "time": "2020-05-28T08:46:28+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/JustSteveKing",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-30T10:47:10+00:00"
         }
     ],
     "packages-dev": [
