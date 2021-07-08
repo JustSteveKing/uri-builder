@@ -16,11 +16,6 @@
       "JustSteveKing\\UriBuilder\\": "src/"
     }
   },
-  "autoload-dev": {
-    "psr-4": {
-      "JustSteveKing\\UriBuilder\\Tests\\": "src/"
-    }
-  },
   "require": {
     "php": "^8.0",
     "juststeveking/parameterbag": "^2.0"
