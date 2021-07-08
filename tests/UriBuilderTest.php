@@ -4,7 +4,7 @@ use JustSteveKing\UriBuilder\Uri;
 
 use function PHPUnit\Framework\assertEquals;
 
-it('will create a new URI Builder from a string', function () {
+it('will create a new URI Builder from a valid uri string', function () {
     $object = Uri::fromString(
         uri: url(),
     );
@@ -16,68 +16,128 @@ it('will create a new URI Builder from a string', function () {
     );
 });
 
+it('will fail to build from a string', function (string $invalidUri) {
+    Uri::fromString(
+        uri: $invalidUri,
+    );
+})->throws(
+    exceptionClass: InvalidArgumentException::class,
+)->with(
+    [
+        'http:///example.com',
+        'https:///example.com',
+        'ftp:///example.com',
+        ':80',
+    ]
+);
+
 it('can set the uri scheme', function () {
-    $object = build();
+    $testScheme = random_string();
+    $object = Uri::build();
 
     expect(
         value: $object->scheme(),
-    )->toEqual(
-        expected: '',
-    );
+    )->toBeEmpty();
 
     $object->addScheme(
-        scheme: 'http',
+        scheme: $testScheme,
     );
 
     expect(
         value: $object->scheme(),
     )->toEqual(
-        expected: 'http',
+        expected: $testScheme,
     );
 });
 
 it('can set the uri host', function () {
-    $object = build();
+    $testHost = random_string();
+    $object = Uri::build();
 
     expect(
         value: $object->host(),
-    )->toEqual(
-        expected: '',
-    );
+    )->toBeEmpty();
 
     $object->addHost(
-        host: 'api.domain.com',
+        host: $testHost,
     );
 
     expect(
         value: $object->host(),
     )->toEqual(
-        expected: 'api.domain.com',
+        expected: $testHost,
     );
 });
 
-it('can set the uri path', function () {
-    $object = build();
+it('can set the uri path (with / prefix)', function () {
+    $testPath = '/' . random_string();
+    $object = Uri::build();
 
     expect(
         value: $object->path(),
-    )->toEqual(
-        expected: '',
-    );
+    )->toBeNull();
 
     $object->addPath(
-        path: 'test',
+        path: $testPath,
     );
 
     expect(
         value: $object->path(),
     )->toEqual(
-        expected: '/test',
+        expected: $testPath,
+    );
+});
+
+it('adds / to the start of path where not present', function() {
+    $testPath = ltrim(string: random_string(), characters: '/');
+    $object = Uri::build();
+
+    $object->addPath(
+        path: $testPath,
+    );
+    expect(
+        value: $object->path(),
+    )->toStartWith(
+        expected: '/'
+    );
+});
+
+it('can set the uri fragment (with # prefix)', function () {
+    $testFragment = '#' . random_string();
+    $object = Uri::build();
+
+    expect(
+        value: $object->fragment(),
+    )->toBeNull();
+
+    $object->addFragment(
+        fragment: $testFragment,
+    );
+
+    expect(
+        value: $object->fragment(),
+    )->toEqual(
+        expected: $testFragment,
+    );
+});
+
+it('adds # to start of fragment where not present', function () {
+    $testFragment = ltrim(string: random_string(), characters: '#');
+    $object = Uri::build();
+
+    $object->addFragment(
+        fragment: $testFragment,
+    );
+
+    expect(
+        value: $object->fragment()
+    )->toStartWith(
+        expected: '#'
     );
 });
 
 it('will set the query', function () {
-    $object = build()->addQuery(
+    $object = Uri::build()->addQuery(
         query: 'test=test',
     );
 
@@ -90,71 +150,42 @@ it('will set the query', function () {
     );
 });
 
-it('can set the uri fragment', function () {
-    $object = build();
-
-    expect(
-        value: $object->fragment(),
-    )->toEqual(
-        expected: '',
-    );
-
-    $object->addFragment(
-        fragment: 'test',
+it('will convert a uri builder object to a string', function (string $testUrl) {
+    $url = Uri::fromString(
+        uri: $testUrl,
     );
 
     expect(
-        value: $object->fragment(),
+        value: $url->toString(),
     )->toEqual(
-        expected: '#test',
-    );
-});
-
-it('will fail to build from a string', function () {
-    $object = Uri::fromString(
-        uri: 'http:///example.com',
+        expected: $testUrl
     );
 
-    $object2 = Uri::fromString(
-        uri: ':80',
+    expect(
+        value: (string)$url,
+    )->toEqual(
+        expected: $testUrl
     );
-})->throws(
-    exceptionClass: InvalidArgumentException::class,
+})->with(
+    [
+        'no path'                           => 'https://www.api.com',
+        'with path'                         => 'https://www.api.com/resource',
+        'with fragment'                     => 'https://www.api.com#add-fragment',
+        'with port'                         => 'https://www.api.com:9000',
+        'with path & fragment'              => 'https://www.api.com/resource#add-fragment',
+        'with path & port'                  => 'https://www.api.com:9856/resource',
+        'with path, port & fragment'        => 'https://www.api.com:9856/resource#add-fragment',
+        'with port & fragment'              => 'https://www.api.com:9856#add-fragment',
+        'with query'                        => 'https://www.api.com?queryTest=result',
+        'with path & query'                 => 'https://www.api.com/resource?queryTest=result',
+        'with port & query'                 => 'https://www.api.com:9000?queryTest=result',
+        'with fragment & query'             => 'https://www.api.com?queryTest=result#fragment',
+        'with port, fragment & query'       => 'https://www.api.com:9000?queryTest=result#fragment',
+        'with path, fragment & query'       => 'https://www.api.com/testResourcePath?queryTest=result#fragment',
+        'with port, path & query'           => 'https://www.api.com:9000/portPathQuery?queryTest=result',
+        'with port, path, fragment & query' => 'https://www.api.com:9000/portPathQuery?queryTest=result#fragment',
+    ]
 );
-
-it('will convert a uri builder object to a string', function () {
-    $url = url();
-
-    $url = Uri::fromString(
-        uri: $url,
-    );
-
-    assertEquals(
-        $url,
-        $url->toString()
-    );
-
-    assertEquals(
-        $url,
-        (string) $url
-    );
-
-    $newUrl = "{$url}#add-fragment";
-
-    $url = Uri::fromString(
-        uri: $newUrl,
-    );
-
-    assertEquals(
-        $newUrl,
-        $url->toString()
-    );
-
-    assertEquals(
-        $newUrl,
-        (string) $url
-    );
-});
 
 it('will build query parameters gradually', function () {
     $object = Uri::fromString(
@@ -220,17 +251,22 @@ it('will convert booleans to string', function () {
     );
 });
 
-it('throws an exception when an unsupported query parameter is passed', function () {
-    $object = Uri::fromString(
-        uri: 'https://www.domain.com/api/v1/resource',
-    );
-
-    $object->addQueryParam(
-        key: 'object',
-        value: new class{},
+it('throws an exception when an unsupported query parameter is passed', function ($testParamValue) {
+    Uri::fromString(
+        uri: url(),
+    )->addQueryParam(
+        key: 'testValue',
+        value: $testParamValue,
     );
 })->throws(
     exceptionClass: InvalidArgumentException::class,
+)->with(
+    [
+        'class' => new class{},
+        'closure' => fn() => random_string(),
+        'resource' => fopen(__FILE__, 'rb'),
+        'null' => null,
+    ]
 );
 
 it('will encode the uri if requested', function () {
@@ -256,45 +292,45 @@ it('will encode the uri if requested', function () {
     );
 });
 
-it('will set the port if passed in', function () {
-    $urlString = 'https://www.domain.com/api/v1/resource';
+it('will set the port if passed in', function (string $testUri, $expectedPort) {
     $object = Uri::fromString(
-        uri: $urlString,
+        uri: $testUri,
     );
 
     expect(
         value: $object->port(),
-    )->toBeNull();
-
-    $object2 = Uri::fromString(
-        uri: 'https://www.domain.com:9000',
+    )->toBe(
+        expected: $expectedPort,
     );
+})->with(
+    [
+        ['uri' => url(), 'expectedPort' => null],
+        ['uri' => 'https://www.domain.com:9000', 'expectedPort' => 9000],
+        ['uri' => 'http://www.domain.com:9100', 'expectedPort' => 9100],
+        ['uri' => 'ftp://site.com', 'expectedPort' => null],
+    ]
+);
 
-    expect(
-        value: $object2->port(),
-    )->toBeInt()->toEqual(
-        expected: 9000,
-    );
-
-    expect(
-        value: $object2->toString(),
-    )->toEqual(
-        expected: 'https://www.domain.com:9000',
-    );
-});
-
-it('cannot set the port to null', function () {
-    $object = build();
-
-    $object->addPort();
+it('cannot set the port with no value', function () {
+    Uri::build()->addPort();
 })->throws(
     exceptionClass: InvalidArgumentException::class,
 );
 
-it('cannot set the query to null', function () {
-    $object = build();
+it('cannot set the port explicitly to null', function () {
+    Uri::build()->addPort();
+})->throws(
+    exceptionClass: InvalidArgumentException::class,
+);
 
-    $object->addQuery();
+it('cannot set the query with no value', function () {
+    Uri::build()->addQuery();
+})->throws(
+    exceptionClass: InvalidArgumentException::class,
+);
+
+it('cannot set the query explicitly to null', function () {
+    Uri::build()->addQuery(query: null);
 })->throws(
     exceptionClass: InvalidArgumentException::class,
 );
@@ -305,12 +341,14 @@ it('will not add a path if nothing is passed to addPath', function () {
     );
 
     expect(
-        value: $object->toString(),
-    )->toEqual(
-        expected: 'https://www.api.com',
-    );
+        value: $object->path()
+    )->toBeNull();
 
-    $object->addPath();
+    $object->addPath(path: null);
+
+    expect(
+        value: $object->path()
+    )->toBeNull();
 
     expect(
         value: $object->toString(),
@@ -325,14 +363,16 @@ it('will not add a fragment if nothing is passed to addFragment', function () {
     );
 
     expect(
-        value: $object->toString(),
-    )->toEqual(
-        expected: 'https://www.api.com',
-    );
+        value: $object->fragment(),
+    )->toBeNull();
 
     $object->addFragment(
         fragment: '',
     );
+
+    expect(
+        value: $object->fragment(),
+    )->toBeNull();
 
     expect(
         value: $object->toString(),
