@@ -2,56 +2,51 @@
 
 namespace JustSteveKing\UriBuilder;
 
+use InvalidArgumentException;
 use JustSteveKing\ParameterBag\ParameterBag;
-use RuntimeException;
 
-class Uri
+final class Uri
 {
     /**
-     * @var string
+     * Uri constructor.
+     *
+     * @param ParameterBag $query
+     * @param string $scheme
+     * @param string $host
+     * @param int|null $port
+     * @param string|null $path
+     * @param string|null $fragment
+     *
+     * @return void
      */
-    private string $scheme = '';
+    private function __construct(
+        private ParameterBag $query,
+        private string $scheme = '',
+        private string $host = '',
+        private null|int $port = null,
+        private null|string $path = null,
+        private null|string $fragment = null,
+    ){}
 
     /**
-     * @var string
+     * Build a new Uri Builder.
+     *
+     * @return Uri
      */
-    private string $host = '';
-
-    /**
-     * @var int|null
-     */
-    private ?int $port = null;
-
-    /**
-     * @var string|null
-     */
-    private ?string $path = null;
-
-    /**
-     * @var ParameterBag
-     */
-    private ParameterBag $query;
-
-    /**
-     * @var string|null
-     */
-    private ?string $fragment = null;
-
-    private function __construct()
+    public static function build(): Uri
     {
-        $this->query = new ParameterBag([]);
+        return new Uri(
+            query: new ParameterBag(),
+        );
     }
 
     /**
-     * @return self
-     */
-    public static function build(): self
-    {
-        return new self();
-    }
-
-    /**
+     * Build a new Uri Builder from a string.
+     *
      * @param  string $uri
+     *
+     * @throws InvalidArgumentException
+     *
      * @return self
      */
     public static function fromString(string $uri): self
@@ -61,50 +56,65 @@ class Uri
         $uri = parse_url($uri);
 
         if (! is_array($uri)) {
-            throw new RuntimeException("URI failed to parse using parse_url, please ensure is valid URL.");
+            throw new InvalidArgumentException(
+                message: "URI failed to parse using parse_url, please ensure is valid URL. Passed in [$uri]",
+            );
         }
 
-        $url = self::build()
-            ->addScheme($uri['scheme'] ?? null)
-            ->addHost($uri['host'] ?? null);
+        $url = static::build()
+            ->addScheme(
+                scheme: $uri['scheme'],
+            )->addHost(
+                host: $uri['host'],
+            );
 
         if (isset($uri['port'])) {
-            $url->addPort($uri['port']);
+            $url->addPort(
+                port: $uri['port'],
+            );
         }
 
         if (isset($uri['path'])) {
-            $url->addPath($uri['path'] ?? null);
+            $url->addPath(
+                path: $uri['path'],
+            );
         }
 
         if (isset($uri['query'])) {
-            $url->addQuery(isset($uri['query']) ? $uri['query'] : null);
+            $url->addQuery(
+                query: $uri['query'],
+            );
         }
 
         $fragment = parse_url($original, PHP_URL_FRAGMENT);
 
         if (! is_null($fragment) && $fragment !== false) {
-            $url->addFragment($fragment);
+            $url->addFragment(
+                fragment: $fragment,
+            );
         }
 
         return $url;
     }
 
     /**
-     * @param  string|null $scheme
+     * Add Scheme.
+     *
+     * @param  string $scheme
+     *
+     *
      * @return self
      */
-    public function addScheme(?string $scheme): self
+    public function addScheme(string $scheme): self
     {
-        if (is_null($scheme)) {
-            throw new RuntimeException("Cannot set scheme to a null value.");
-        }
-
         $this->scheme = $scheme;
 
         return $this;
     }
 
     /**
+     * Get the Uri Scheme.
+     *
      * @return string
      */
     public function scheme(): string
@@ -113,21 +123,23 @@ class Uri
     }
 
     /**
-     * @param  string|null $host
+     * Set the Uri Host.
+     *
+     * @param  string $host
+     *
+     *
      * @return self
      */
-    public function addHost(?string $host): self
+    public function addHost(string $host): self
     {
-        if (is_null($host)) {
-            throw new RuntimeException("Cannot set host to a null value.");
-        }
-
         $this->host = $host;
 
         return $this;
     }
 
     /**
+     * Get the Uri Host.
+     *
      * @return string
      */
     public function host(): string
@@ -136,13 +148,20 @@ class Uri
     }
 
     /**
-     * @param int|null $port
+     * Set the Uri Port.
+     *
+     * @param null|int $port
+     *
+     * @throws InvalidArgumentException
+     *
      * @return $this
      */
-    public function addPort(?int $port): self
+    public function addPort(null|int $port = null): self
     {
         if (is_null($port)) {
-            throw new RuntimeException("Cannot set port to a null value.");
+            throw new InvalidArgumentException(
+                message: 'Cannot set port to a null value.',
+            );
         }
 
         $this->port = $port;
@@ -151,52 +170,72 @@ class Uri
     }
 
     /**
-     * @return int|null
+     * Get the Uri Port.
+     *
+     * @return null|int
      */
-    public function port():? int
+    public function port(): null|int
     {
         return $this->port;
     }
 
     /**
-     * @param  string|null $path
+     * Set the Uri Path.
+     *
+     * @param  null|string $path
      * @return self
      */
-    public function addPath(?string $path = null): self
+    public function addPath(null|string $path = null): self
     {
         if (is_null($path)) {
             return $this;
         }
 
-        $this->path = (substr($path, 0, 1) === '/') ? $path : "/{$path}";
+        $this->path = str_starts_with(
+            haystack: $path,
+            needle: '/',
+        ) ? $path : "/$path";
 
         return $this;
     }
 
     /**
-     * @return string|null
+     * Get the Uri Path.
+     *
+     * @return null|string
      */
-    public function path():? string
+    public function path(): null|string
     {
         return $this->path;
     }
 
     /**
-     * @param  string|null $query
+     * Set the Uri Query.
+     *
+     * @param  null|string $query
+     *
+     * @throws InvalidArgumentException
+     *
      * @return self
      */
-    public function addQuery(?string $query = null): self
+    public function addQuery(null|string $query = null): self
     {
         if (is_null($query)) {
-            throw new RuntimeException("Cannot set query to a null value.");
+            throw new InvalidArgumentException(
+                message: 'Cannot set query to a null value.',
+            );
         }
 
-        $this->query = ParameterBag::fromString($query);
+        $this->query = ParameterBag::fromString(
+            attributes: $query,
+        );
 
         return $this;
     }
 
     /**
+     * Get the Uri Query.
+     *
      * @return ParameterBag
      */
     public function query(): ParameterBag
@@ -205,27 +244,39 @@ class Uri
     }
 
     /**
+     * Set a Query Param.
+     *
      * @param  string $key
      * @param  mixed  $value
      * @param  bool   $covertBoolToString
+     *
+     * @throws InvalidArgumentException
+     *
      * @return self
      */
-    public function addQueryParam(string $key, $value, bool $covertBoolToString = false): self
+    public function addQueryParam(string $key, mixed $value, bool $covertBoolToString = false): self
     {
-        if (is_array($value) || is_object($value)) {
-            throw new RuntimeException("Cannot set Query Parameter to: array, object");
+        if (! in_array(gettype($value), ['string', 'array', 'int', 'float', 'boolean'])) {
+            throw new InvalidArgumentException(
+                message:'Cannot set Query Parameter to: ' . gettype($value),
+            );
         }
 
         if ($covertBoolToString && is_bool($value)) {
             $value = ($value) ? 'true' : 'false';
         }
 
-        $this->query->set($key, $value);
+        $this->query->set(
+            key: $key,
+            value: $value,
+        );
 
         return $this;
     }
 
     /**
+     * Get the Uri Query Parameters.
+     *
      * @return array
      */
     public function queryParams(): array
@@ -234,6 +285,8 @@ class Uri
     }
 
     /**
+     * Set the Uri Fragment.
+     *
      * @param  string $fragment
      * @return self
      */
@@ -243,20 +296,27 @@ class Uri
             return $this;
         }
 
-        $this->fragment = (substr($fragment, 0, 1) === '#') ? $fragment : "#{$fragment}";
+        $this->fragment = str_starts_with(
+            haystack: $fragment,
+            needle:'#',
+        ) ? $fragment : "#{$fragment}";
 
         return $this;
     }
 
     /**
-     * @return string|null
+     * Set the Uri Fragment.
+     *
+     * @return null|string
      */
-    public function fragment():? string
+    public function fragment(): null|string
     {
         return $this->fragment;
     }
 
     /**
+     * Turn Uri to String - proxies to toString().
+     *
      * @return string
      */
     public function __toString(): string
@@ -265,25 +325,28 @@ class Uri
     }
 
     /**
+     * Turn Uri to String.
+     *
      * @param bool $encode
+     *
      * @return string
      */
     public function toString(bool $encode = false): string
     {
-        $url = "{$this->scheme}://{$this->host}";
+        $url = "$this->scheme://$this->host";
 
         if (! is_null($this->port)) {
-            $url .= ":{$this->port}";
+            $url .= ":$this->port";
         }
 
         if (! is_null($this->path)) {
-            $url .= "{$this->path}";
+            $url .= "$this->path";
         }
 
         if (! empty($this->query->all())) {
             $collection = [];
             foreach ($this->query->all() as $key => $value) {
-                $collection[] = "{$key}={$value}";
+                $collection[] = "$key=$value";
             }
 
             $queryParamString = implode('&', $collection);
@@ -292,11 +355,11 @@ class Uri
                 $queryParamString = urlencode($queryParamString);
             }
 
-            $url .= "?{$queryParamString}";
+            $url .= "?$queryParamString";
         }
 
         if (! is_null($this->fragment)) {
-            $url .= "{$this->fragment}";
+            $url .= "$this->fragment";
         }
 
         return $url;
