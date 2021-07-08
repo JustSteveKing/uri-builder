@@ -1,18 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 use JustSteveKing\UriBuilder\Uri;
 
 use function PHPUnit\Framework\assertEquals;
-
-it('can create a new instance of the URI builder', function () {
-    $object = Uri::build();
-
-    expect(
-        value: $object,
-    )->toBeInstanceOf(
-        class: Uri::class,
-    );
-});
 
 it('will create a new URI Builder from a string', function () {
     $object = Uri::fromString(
