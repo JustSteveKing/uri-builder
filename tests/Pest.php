@@ -50,3 +50,8 @@ function build(): Uri
 {
     return Uri::build();
 }
+
+function random_string(): string
+{
+    return sha1(random_bytes(11));
+}
