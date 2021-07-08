@@ -5,38 +5,12 @@
   "license": "MIT",
   "authors": [
     {
+      "role": "Developer",
       "name": "Steve McDougall",
-      "email": "juststevemcd@gmail.com"
+      "email": "juststevemcd@gmail.com",
+      "homepage": "https://www.juststeveking.uk/"
     }
   ],
-  "require": {
-    "php": "^7.4|^8.0",
-    "juststeveking/parameterbag": "^1.2.0"
-  },
-  "require-dev": {
-    "symfony/var-dumper": "^5.1",
-    "phpunit/phpunit": "^9.4",
-    "phpstan/phpstan": "^0.12.48",
-    "squizlabs/php_codesniffer": "^3.5",
-    "thecodingmachine/phpstan-safe-rule": "^1.0",
-    "roave/security-advisories": "dev-latest"
-  },
-  "scripts": {
-    "preflight:analyze": [
-      "@preflight:analyze:phpstan"
-    ],
-    "preflight:analyze:phpstan": "phpstan analyse -c phpstan.neon.dist --no-progress",
-    "preflight:test": "phpunit",
-    "preflight:test:coverage:ci": "phpunit --coverage-clover build/logs/clover.xml",
-    "preflight:test:coverage:html": "phpunit --coverage-html build/coverage"
-  },
-  "scripts-descriptions": {
-    "preflight:analyze": "Performs static analysis on the code base.",
-    "preflight:analyze:phpstan": "Runs the PHPStan static analyzer.",
-    "preflight:test": "Runs the full unit test suite.",
-    "preflight:test:coverage:ci": "Runs the unit test suite and generates a Clover coverage report.",
-    "preflight:test:coverage:html": "Runs the unit tests suite and generates an HTML coverage report."
-  },
   "autoload": {
     "psr-4": {
       "JustSteveKing\\UriBuilder\\": "src/"
@@ -46,5 +20,18 @@
     "psr-4": {
       "JustSteveKing\\UriBuilder\\Tests\\": "src/"
     }
+  },
+  "require": {
+    "php": "^8.0",
+    "juststeveking/parameterbag": "^2.0"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "pestphp/pest": "^1.8",
+    "vimeo/psalm": "^4.8"
+  },
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true
   }
 }
