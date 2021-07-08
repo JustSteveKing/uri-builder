@@ -55,7 +55,10 @@ final class Uri
 
         $uri = parse_url($uri);
 
-        if (! is_array($uri)) {
+        if (
+            ! is_array($uri)
+            || ! isset($uri['scheme'], $uri['host'])
+        ) {
             throw new InvalidArgumentException(
                 message: "URI failed to parse using parse_url, please ensure is valid URL. Passed in [$uri]",
             );
