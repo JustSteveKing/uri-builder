@@ -318,7 +318,7 @@ it('cannot set the port with no value', function () {
 );
 
 it('cannot set the port explicitly to null', function () {
-    Uri::build()->addPort();
+    Uri::build()->addPort(port: null);
 })->throws(
     exceptionClass: InvalidArgumentException::class,
 );
