@@ -32,7 +32,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+        run: composer install --no-interaction --no-suggest
 
       - name: Execute tests
         run: php --version && ./vendor/bin/pest --version && ./vendor/bin/pest
