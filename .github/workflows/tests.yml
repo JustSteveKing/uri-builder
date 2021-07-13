@@ -25,14 +25,14 @@ jobs:
           key: php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
       - name: Setup php
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, soap, intl, exif, iconv
           coverage: none
 
       - name: Install dependencies
-        run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+        run: composer install --no-interaction --no-suggest
 
       - name: Execute tests
-        run: ./vendor/bin/pest
+        run: php --version && ./vendor/bin/pest --version && ./vendor/bin/pest
