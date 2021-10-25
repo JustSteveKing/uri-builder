@@ -362,7 +362,7 @@ final class Uri
         }
 
         if (! is_null($this->fragment)) {
-            $url .= "$this->fragment";
+            $url .= "#$this->fragment";
         }
 
         return $url;
