@@ -108,3 +108,19 @@ $url->addQueryParam('include', 'test,another,options')
     ->addQueryParam('published', true, true);
 ```
 The output will be: `https://www.domain.com/api/v1/resource?include=test,another,options&published=true`
+
+### Appending uri path
+
+When you want to the path dynamically you can append given uri path to an existing
+path in uri. It will ensure that added path is divided by `/`.
+
+```php
+$url = Uri::fromString('https://www.domain.com/api/v1/resource');
+$id = 1;
+
+if ($id !== null) {
+    $url->appendPath($id);
+}
+```
+
+The output will be: `https://www.domain.com/api/v1/resource/1`

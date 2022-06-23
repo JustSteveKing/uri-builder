@@ -203,6 +203,27 @@ final class Uri
     }
 
     /**
+     * Appends given path to current path value. Auto adds a slash if it needs to be added.
+     *
+     * @param  string $path
+     * @return self
+     */
+    public function appendToPath(string $path): self
+    {
+        $shouldPrefixSlash = str_ends_with(
+                haystack: $this->path,
+                needle: '/',
+            ) === false && str_starts_with(
+                haystack: $path,
+                needle: '/',
+            ) === false;
+
+        $this->path .= $shouldPrefixSlash ? "/$path" : "$path";
+
+        return $this;
+    }
+
+    /**
      * Get the Uri Path.
      *
      * @return null|string

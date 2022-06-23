@@ -380,3 +380,35 @@ it('will not add a fragment if nothing is passed to addFragment', function () {
         expected: 'https://www.api.com',
     );
 });
+
+it('will append path without adding slash if it contains it in given path', function () {
+    expect(
+        value: Uri::fromString(uri: 'https://www.api.com')->addPath('/test')->toString(),
+    )->toEqual(
+        expected: 'https://www.api.com/test',
+    );
+});
+
+it('will append path without adding slash if main path has it', function () {
+    expect(
+        value: Uri::fromString(uri: 'https://www.api.com/')->addPath('test')->toString(),
+    )->toEqual(
+        expected: 'https://www.api.com/test',
+    );
+});
+
+it('will append path without adding slash if main path and given path has it', function () {
+    expect(
+        value: Uri::fromString(uri: 'https://www.api.com/')->addPath('/test')->toString(),
+    )->toEqual(
+        expected: 'https://www.api.com/test',
+    );
+});
+
+it('will append path without adding slash if the path is missing it', function () {
+    expect(
+        value: Uri::fromString(uri: 'https://www.api.com')->addPath('test/test')->toString(),
+    )->toEqual(
+        expected: 'https://www.api.com/test/test',
+    );
+});
