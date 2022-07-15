@@ -1,22 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace JustSteveKing\UriBuilder;
 
 use InvalidArgumentException;
 use JustSteveKing\ParameterBag\ParameterBag;
 
+use Safe\Exceptions\UrlException;
+
+use function Safe\parse_url;
+
 final class Uri
 {
     /**
-     * Uri constructor.
-     *
      * @param ParameterBag $query
      * @param string $scheme
      * @param string $host
      * @param int|null $port
      * @param string|null $path
      * @param string|null $fragment
-     *
      * @return void
      */
     private function __construct(
@@ -26,11 +29,10 @@ final class Uri
         private null|int $port = null,
         private null|string $path = null,
         private null|string $fragment = null,
-    ){}
+    ) {
+    }
 
     /**
-     * Build a new Uri Builder.
-     *
      * @return Uri
      */
     public static function build(): Uri
@@ -41,15 +43,12 @@ final class Uri
     }
 
     /**
-     * Build a new Uri Builder from a string.
-     *
-     * @param  string $uri
-     *
+     * @param string $uri
+     * @return Uri
+     * @throws UrlException
      * @throws InvalidArgumentException
-     *
-     * @return self
      */
-    public static function fromString(string $uri): self
+    public static function fromString(string $uri): Uri
     {
         $original = $uri;
 
@@ -64,7 +63,7 @@ final class Uri
             );
         }
 
-        $url = static::build()
+        $url = Uri::build()
             ->addScheme(
                 scheme: $uri['scheme'],
             )->addHost(
@@ -91,7 +90,7 @@ final class Uri
 
         $fragment = parse_url($original, PHP_URL_FRAGMENT);
 
-        if (! is_null($fragment) && $fragment !== false) {
+        if (! is_null($fragment)) {
             $url->addFragment(
                 fragment: $fragment,
             );
@@ -101,14 +100,10 @@ final class Uri
     }
 
     /**
-     * Add Scheme.
-     *
      * @param  string $scheme
-     *
-     *
-     * @return self
+     * @return Uri
      */
-    public function addScheme(string $scheme): self
+    public function addScheme(string $scheme): Uri
     {
         $this->scheme = $scheme;
 
@@ -116,8 +111,6 @@ final class Uri
     }
 
     /**
-     * Get the Uri Scheme.
-     *
      * @return string
      */
     public function scheme(): string
@@ -126,14 +119,10 @@ final class Uri
     }
 
     /**
-     * Set the Uri Host.
-     *
      * @param  string $host
-     *
-     *
-     * @return self
+     * @return Uri
      */
-    public function addHost(string $host): self
+    public function addHost(string $host): Uri
     {
         $this->host = $host;
 
@@ -141,8 +130,6 @@ final class Uri
     }
 
     /**
-     * Get the Uri Host.
-     *
      * @return string
      */
     public function host(): string
@@ -151,15 +138,11 @@ final class Uri
     }
 
     /**
-     * Set the Uri Port.
-     *
      * @param null|int $port
-     *
      * @throws InvalidArgumentException
-     *
-     * @return $this
+     * @return Uri
      */
-    public function addPort(null|int $port = null): self
+    public function addPort(null|int $port = null): Uri
     {
         if (is_null($port)) {
             throw new InvalidArgumentException(
@@ -173,8 +156,6 @@ final class Uri
     }
 
     /**
-     * Get the Uri Port.
-     *
      * @return null|int
      */
     public function port(): null|int
@@ -183,12 +164,10 @@ final class Uri
     }
 
     /**
-     * Set the Uri Path.
-     *
      * @param  null|string $path
-     * @return self
+     * @return Uri
      */
-    public function addPath(null|string $path = null): self
+    public function addPath(null|string $path = null): Uri
     {
         if (is_null($path)) {
             return $this;
@@ -203,8 +182,6 @@ final class Uri
     }
 
     /**
-     * Get the Uri Path.
-     *
      * @return null|string
      */
     public function path(): null|string
@@ -213,15 +190,11 @@ final class Uri
     }
 
     /**
-     * Set the Uri Query.
-     *
      * @param  null|string $query
-     *
      * @throws InvalidArgumentException
-     *
-     * @return self
+     * @return Uri
      */
-    public function addQuery(null|string $query = null): self
+    public function addQuery(null|string $query = null): Uri
     {
         if (is_null($query)) {
             throw new InvalidArgumentException(
@@ -237,8 +210,6 @@ final class Uri
     }
 
     /**
-     * Get the Uri Query.
-     *
      * @return ParameterBag
      */
     public function query(): ParameterBag
@@ -247,17 +218,13 @@ final class Uri
     }
 
     /**
-     * Set a Query Param.
-     *
      * @param  string $key
-     * @param  mixed  $value
+     * @param  int|string|bool|null|array  $value
      * @param  bool   $covertBoolToString
-     *
      * @throws InvalidArgumentException
-     *
-     * @return self
+     * @return Uri
      */
-    public function addQueryParam(string $key, mixed $value, bool $covertBoolToString = false): self
+    public function addQueryParam(string $key, int|string|bool|null|array $value, bool $covertBoolToString = false): Uri
     {
         if (! in_array(gettype($value), ['string', 'array', 'int', 'float', 'boolean'])) {
             throw new InvalidArgumentException(
@@ -278,9 +245,7 @@ final class Uri
     }
 
     /**
-     * Get the Uri Query Parameters.
-     *
-     * @return array
+     * @return array<string,mixed>
      */
     public function queryParams(): array
     {
@@ -288,12 +253,10 @@ final class Uri
     }
 
     /**
-     * Set the Uri Fragment.
-     *
      * @param  string $fragment
-     * @return self
+     * @return Uri
      */
-    public function addFragment(string $fragment): self
+    public function addFragment(string $fragment): Uri
     {
         if ($fragment === '') {
             return $this;
@@ -308,8 +271,6 @@ final class Uri
     }
 
     /**
-     * Set the Uri Fragment.
-     *
      * @return null|string
      */
     public function fragment(): null|string
@@ -318,8 +279,6 @@ final class Uri
     }
 
     /**
-     * Turn Uri to String - proxies to toString().
-     *
      * @return string
      */
     public function __toString(): string
@@ -328,10 +287,7 @@ final class Uri
     }
 
     /**
-     * Turn Uri to String.
-     *
      * @param bool $encode
-     *
      * @return string
      */
     public function toString(bool $encode = false): string
