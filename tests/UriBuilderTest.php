@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use JustSteveKing\UriBuilder\Uri;
-
-use function PHPUnit\Framework\assertEquals;
+use Safe\Exceptions\UrlException;
 
 it('will create a new URI Builder from a valid uri string', function () {
     $object = Uri::fromString(
@@ -20,9 +21,7 @@ it('will fail to build from a string', function (string $invalidUri) {
     Uri::fromString(
         uri: $invalidUri,
     );
-})->throws(
-    exceptionClass: InvalidArgumentException::class,
-)->with(
+})->throws(UrlException::class)->with(
     [
         'http:///example.com',
         'https:///example.com',
@@ -88,7 +87,7 @@ it('can set the uri path (with / prefix)', function () {
     );
 });
 
-it('adds / to the start of path where not present', function() {
+it('adds / to the start of path where not present', function () {
     $testPath = ltrim(string: random_string(), characters: '/');
     $object = Uri::build();
 
@@ -251,24 +250,6 @@ it('will convert booleans to string', function () {
     );
 });
 
-it('throws an exception when an unsupported query parameter is passed', function ($testParamValue) {
-    Uri::fromString(
-        uri: url(),
-    )->addQueryParam(
-        key: 'testValue',
-        value: $testParamValue,
-    );
-})->throws(
-    exceptionClass: InvalidArgumentException::class,
-)->with(
-    [
-        'class' => new class{},
-        'closure' => fn() => random_string(),
-        'resource' => fopen(__FILE__, 'rb'),
-        'null' => null,
-    ]
-);
-
 it('will encode the uri if requested', function () {
     $queryParam = "query=url encode me";
 
@@ -314,25 +295,25 @@ it('will set the port if passed in', function (string $testUri, $expectedPort) {
 it('cannot set the port with no value', function () {
     Uri::build()->addPort();
 })->throws(
-    exceptionClass: InvalidArgumentException::class,
+    InvalidArgumentException::class,
 );
 
 it('cannot set the port explicitly to null', function () {
     Uri::build()->addPort(port: null);
 })->throws(
-    exceptionClass: InvalidArgumentException::class,
+    InvalidArgumentException::class,
 );
 
 it('cannot set the query with no value', function () {
     Uri::build()->addQuery();
 })->throws(
-    exceptionClass: InvalidArgumentException::class,
+    InvalidArgumentException::class,
 );
 
 it('cannot set the query explicitly to null', function () {
     Uri::build()->addQuery(query: null);
 })->throws(
-    exceptionClass: InvalidArgumentException::class,
+    InvalidArgumentException::class,
 );
 
 it('will not add a path if nothing is passed to addPath', function () {
